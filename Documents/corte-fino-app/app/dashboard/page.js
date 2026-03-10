@@ -9,9 +9,11 @@ export default function Dashboard() {
   const [perfil, setPerfil] = useState(null)
   const [servicios, setServicios] = useState([])
   const [reservas, setReservas] = useState([])
+  const [barberos, setBarberos] = useState([])
   const [loading, setLoading] = useState(true)
   const [modalAbierto, setModalAbierto] = useState(false)
   const [servicioSeleccionado, setServicioSeleccionado] = useState(null)
+  const [barberoSeleccionado, setBarberoSeleccionado] = useState('')
   const [fecha, setFecha] = useState('')
   const [hora, setHora] = useState('')
   const [loadingReserva, setLoadingReserva] = useState(false)
@@ -38,9 +40,15 @@ export default function Dashboard() {
         .eq('activo', true)
       setServicios(serviciosData || [])
 
+      const { data: barberosData } = await supabase
+        .from('barberos')
+        .select('*, perfiles(nombre)')
+        .eq('activo', true)
+      setBarberos(barberosData || [])
+
       const { data: reservasData } = await supabase
         .from('reservas')
-        .select('*, servicios(nombre, precio)')
+        .select('*, servicios(nombre, precio), barberos(id, perfiles(nombre))')
         .eq('cliente_id', user.id)
         .order('fecha', { ascending: true })
       setReservas(reservasData || [])
@@ -61,6 +69,7 @@ export default function Dashboard() {
     setModalAbierto(true)
     setFecha('')
     setHora('')
+    setBarberoSeleccionado('')
     setMensajeExito('')
   }
 
@@ -70,8 +79,8 @@ export default function Dashboard() {
   }
 
   const confirmarReserva = async () => {
-    if (!fecha || !hora) {
-      alert('Por favor selecciona fecha y hora')
+    if (!fecha || !hora || !barberoSeleccionado) {
+      alert('Por favor completa todos los campos')
       return
     }
 
@@ -81,6 +90,7 @@ export default function Dashboard() {
 
     const { error } = await supabase.from('reservas').insert({
       cliente_id: user.id,
+      barbero_id: barberoSeleccionado,
       servicio_id: servicioSeleccionado.id,
       fecha,
       hora,
@@ -95,7 +105,7 @@ export default function Dashboard() {
 
     const { data: reservasData } = await supabase
       .from('reservas')
-      .select('*, servicios(nombre, precio)')
+      .select('*, servicios(nombre, precio), barberos(id, perfiles(nombre))')
       .eq('cliente_id', user.id)
       .order('fecha', { ascending: true })
 
@@ -104,6 +114,7 @@ export default function Dashboard() {
     setMensajeExito('¡Reserva creada! Te confirmaremos pronto. ✅')
     setFecha('')
     setHora('')
+    setBarberoSeleccionado('')
   }
 
   const cancelarReserva = async (reservaId) => {
@@ -170,6 +181,7 @@ export default function Dashboard() {
                     <span className={`reserva-estado ${r.estado}`}>{r.estado}</span>
                   </div>
                   <div className="reserva-detalle">
+                    <span>✂ {r.barberos?.perfiles?.nombre}</span>
                     <span>📅 {r.fecha}</span>
                     <span>🕐 {r.hora}</span>
                     <span>💰 ${r.servicios?.precio?.toLocaleString()}</span>
@@ -233,6 +245,22 @@ export default function Dashboard() {
               </div>
             ) : (
               <div className="modal-form">
+                <div className="form-group">
+                  <label>Barbero</label>
+                  <select
+                    value={barberoSeleccionado}
+                    onChange={(e) => setBarberoSeleccionado(e.target.value)}
+                    className="select-hora"
+                  >
+                    <option value="">Selecciona un barbero</option>
+                    {barberos.map(b => (
+                      <option key={b.id} value={b.id}>
+                        {b.perfiles?.nombre}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
                 <div className="form-group">
                   <label>Fecha</label>
                   <input
