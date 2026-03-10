@@ -10,75 +10,106 @@ export default function PanelAdmin() {
   const [reservas, setReservas] = useState([])
   const [servicios, setServicios] = useState([])
   const [barberos, setBarberos] = useState([])
+  const [usuarios, setUsuarios] = useState([])
   const [loading, setLoading] = useState(true)
   const [vistaActiva, setVistaActiva] = useState('reservas')
 
   useEffect(() => {
     const cargarDatos = async () => {
       const { data: { user } } = await supabase.auth.getUser()
-      if (!user) {
-        router.push('/login')
-        return
-      }
+      if (!user) { router.push('/login'); return }
 
       const { data: perfilData } = await supabase
-        .from('perfiles')
-        .select('*')
-        .eq('id', user.id)
-        .single()
+        .from('perfiles').select('*').eq('id', user.id).single()
 
-      if (perfilData?.rol !== 'admin') {
-        router.push('/dashboard')
-        return
-      }
-
+      if (perfilData?.rol !== 'admin') { router.push('/dashboard'); return }
       setPerfil(perfilData)
 
-      // Cargar todas las reservas
       const { data: reservasData } = await supabase
         .from('reservas')
         .select('*, servicios(nombre, precio), perfiles(nombre, telefono), barberos(id, perfiles(nombre))')
         .order('fecha', { ascending: true })
       setReservas(reservasData || [])
 
-      // Cargar servicios
-      const { data: serviciosData } = await supabase
-        .from('servicios')
-        .select('*')
+      const { data: serviciosData } = await supabase.from('servicios').select('*')
       setServicios(serviciosData || [])
 
-      // Cargar barberos
       const { data: barberosData } = await supabase
-        .from('barberos')
-        .select('*, perfiles(nombre)')
+        .from('barberos').select('*, perfiles(nombre, telefono)')
       setBarberos(barberosData || [])
+
+      const { data: usuariosData } = await supabase
+        .from('perfiles').select('*').order('nombre')
+      setUsuarios(usuariosData || [])
 
       setLoading(false)
     }
-
     cargarDatos()
   }, [router])
 
-  const toggleServicio = async (id, activo) => {
-    await supabase
-      .from('servicios')
-      .update({ activo: !activo })
-      .eq('id', id)
+  const recargarTodo = async () => {
+    const { data: reservasData } = await supabase
+      .from('reservas')
+      .select('*, servicios(nombre, precio), perfiles(nombre, telefono), barberos(id, perfiles(nombre))')
+      .order('fecha', { ascending: true })
+    setReservas(reservasData || [])
 
-    setServicios(prev => prev.map(s =>
-      s.id === id ? { ...s, activo: !activo } : s
-    ))
+    const { data: serviciosData } = await supabase.from('servicios').select('*')
+    setServicios(serviciosData || [])
+
+    const { data: barberosData } = await supabase
+      .from('barberos').select('*, perfiles(nombre, telefono)')
+    setBarberos(barberosData || [])
+
+    const { data: usuariosData } = await supabase
+      .from('perfiles').select('*').order('nombre')
+    setUsuarios(usuariosData || [])
+  }
+
+  const toggleServicio = async (id, activo) => {
+    await supabase.from('servicios').update({ activo: !activo }).eq('id', id)
+    setServicios(prev => prev.map(s => s.id === id ? { ...s, activo: !activo } : s))
   }
 
   const toggleBarbero = async (id, activo) => {
-    await supabase
-      .from('barberos')
-      .update({ activo: !activo })
-      .eq('id', id)
+    await supabase.from('barberos').update({ activo: !activo }).eq('id', id)
+    setBarberos(prev => prev.map(b => b.id === id ? { ...b, activo: !activo } : b))
+  }
 
-    setBarberos(prev => prev.map(b =>
-      b.id === id ? { ...b, activo: !activo } : b
-    ))
+  const eliminarBarbero = async (barberoId, perfilId) => {
+    const confirmar = window.confirm('¿Eliminar este barbero? Esta acción no se puede deshacer.')
+    if (!confirmar) return
+    await supabase.from('barberos').delete().eq('id', barberoId)
+    await supabase.from('perfiles').update({ rol: 'cliente' }).eq('id', perfilId)
+    await recargarTodo()
+  }
+
+  const promoverABarbero = async (usuario) => {
+    const especialidad = prompt(`Especialidad de ${usuario.nombre}:`, 'Corte clásico y degradados')
+    if (!especialidad) return
+
+    // Cambiar rol
+    await supabase.from('perfiles')
+      .update({ rol: 'barbero' })
+      .eq('id', usuario.id)
+
+    // Crear entrada en barberos
+    await supabase.from('barberos').insert({
+      perfil_id: usuario.id,
+      especialidad,
+      activo: true
+    })
+
+    await recargarTodo()
+  }
+
+  const degradarACliente = async (perfilId) => {
+    const confirmar = window.confirm('¿Quitar rol de barbero a este usuario?')
+    if (!confirmar) return
+
+    await supabase.from('barberos').delete().eq('perfil_id', perfilId)
+    await supabase.from('perfiles').update({ rol: 'cliente' }).eq('id', perfilId)
+    await recargarTodo()
   }
 
   const handleLogout = async () => {
@@ -103,31 +134,22 @@ export default function PanelAdmin() {
         </div>
         <div className="dash-nav-right">
           <span>👑 {perfil?.nombre}</span>
-          <button onClick={handleLogout} className="btn-logout">
-            Cerrar sesión
-          </button>
+          <button onClick={handleLogout} className="btn-logout">Cerrar sesión</button>
         </div>
       </nav>
 
-      {/* TABS */}
       <div className="admin-tabs">
-        <button
-          className={`admin-tab ${vistaActiva === 'reservas' ? 'active' : ''}`}
-          onClick={() => setVistaActiva('reservas')}
-        >
+        <button className={`admin-tab ${vistaActiva === 'reservas' ? 'active' : ''}`} onClick={() => setVistaActiva('reservas')}>
           Reservas ({reservas.length})
         </button>
-        <button
-          className={`admin-tab ${vistaActiva === 'servicios' ? 'active' : ''}`}
-          onClick={() => setVistaActiva('servicios')}
-        >
+        <button className={`admin-tab ${vistaActiva === 'servicios' ? 'active' : ''}`} onClick={() => setVistaActiva('servicios')}>
           Servicios ({servicios.length})
         </button>
-        <button
-          className={`admin-tab ${vistaActiva === 'barberos' ? 'active' : ''}`}
-          onClick={() => setVistaActiva('barberos')}
-        >
+        <button className={`admin-tab ${vistaActiva === 'barberos' ? 'active' : ''}`} onClick={() => setVistaActiva('barberos')}>
           Barberos ({barberos.length})
+        </button>
+        <button className={`admin-tab ${vistaActiva === 'usuarios' ? 'active' : ''}`} onClick={() => setVistaActiva('usuarios')}>
+          Usuarios ({usuarios.length})
         </button>
       </div>
 
@@ -196,16 +218,59 @@ export default function PanelAdmin() {
                   <div className="admin-card-info">
                     <h3>{b.perfiles?.nombre}</h3>
                     <p>{b.especialidad}</p>
+                    <p style={{fontSize: '0.8rem', color: '#666'}}>{b.perfiles?.telefono}</p>
                     <span className={b.activo ? 'estado-activo' : 'estado-inactivo'}>
                       {b.activo ? '● Activo' : '● Inactivo'}
                     </span>
                   </div>
-                  <button
-                    onClick={() => toggleBarbero(b.id, b.activo)}
-                    className={b.activo ? 'btn-desactivar' : 'btn-activar'}
-                  >
-                    {b.activo ? 'Desactivar' : 'Activar'}
-                  </button>
+                  <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
+                    <button
+                      onClick={() => toggleBarbero(b.id, b.activo)}
+                      className={b.activo ? 'btn-desactivar' : 'btn-activar'}
+                    >
+                      {b.activo ? 'Desactivar' : 'Activar'}
+                    </button>
+                    <button
+                      onClick={() => degradarACliente(b.perfiles?.id)}
+                      className="btn-eliminar"
+                    >
+                      Quitar rol
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* USUARIOS */}
+        {vistaActiva === 'usuarios' && (
+          <section className="dash-section">
+            <h2>Gestionar <span className="gold">Usuarios</span></h2>
+            <div className="admin-grid">
+              {usuarios.map((u) => (
+                <div key={u.id} className="admin-card">
+                  <div className="admin-card-info">
+                    <h3>{u.nombre}</h3>
+                    <p style={{fontSize: '0.8rem', color: '#888'}}>{u.telefono}</p>
+                    <span className={`rol-badge rol-${u.rol}`}>{u.rol}</span>
+                  </div>
+                  {u.rol === 'cliente' && (
+                    <button
+                      onClick={() => promoverABarbero(u)}
+                      className="btn-activar"
+                    >
+                      Hacer barbero
+                    </button>
+                  )}
+                  {u.rol === 'barbero' && (
+                    <button
+                      onClick={() => degradarACliente(u.id)}
+                      className="btn-desactivar"
+                    >
+                      Quitar rol
+                    </button>
+                  )}
                 </div>
               ))}
             </div>

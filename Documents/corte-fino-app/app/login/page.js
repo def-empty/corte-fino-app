@@ -16,19 +16,32 @@ export default function Login() {
     setLoading(true)
     setError('')
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password
     })
 
-    if (error) {
-      setError('Email o contraseña incorrectos')
-      setLoading(false)
-      return
-    }
+if (error) {
+  setError('Email o contraseña incorrectos')
+  setLoading(false)
+  return
+}
 
-    router.push('/dashboard')
-  }
+// Verificar rol y redirigir
+const { data: perfil } = await supabase
+  .from('perfiles')
+  .select('rol')
+  .eq('id', data.user.id)
+  .single()
+
+if (perfil?.rol === 'admin') {
+  router.push('/admin')
+} else if (perfil?.rol === 'barbero') {
+  router.push('/barbero')
+} else {
+  router.push('/dashboard')
+}
+ }
 
   return (
     <div className="auth-container">

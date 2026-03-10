@@ -627,3 +627,69 @@ body {
   color: #dc3545;
   font-size: 0.82rem;
 }
+
+.section-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.btn-primary-admin {
+  background: #c9a84c;
+  color: #0a0a0a;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+.btn-primary-admin:hover {
+  background: #e2c074;
+}
+
+.btn-eliminar {
+  background: transparent;
+  border: 1px solid rgba(220, 53, 69, 0.4);
+  color: #dc3545;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+}
+
+.btn-eliminar:hover {
+  background: rgba(220, 53, 69, 0.1);
+}
+
+
+.rol-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 5px;
+}
+
+.rol-cliente {
+  background: rgba(108, 117, 125, 0.2);
+  color: #aaa;
+}
+
+.rol-barbero {
+  background: rgba(201, 168, 76, 0.2);
+  color: #c9a84c;
+}
+
+.rol-admin {
+  background: rgba(111, 66, 193, 0.2);
+  color: #9b6fd4;
+}
