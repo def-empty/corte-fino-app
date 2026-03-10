@@ -1,0 +1,493 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #0a0a0a;
+  color: #f5f5f5;
+  font-family: 'Raleway', sans-serif;
+}
+
+/* ========================
+   AUTH PAGES
+======================== */
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0a0a;
+  padding: 20px;
+}
+
+.auth-card {
+  background: #111;
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  border-radius: 8px;
+  padding: 50px 40px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.auth-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 30px;
+  justify-content: center;
+}
+
+.auth-logo span {
+  color: #c9a84c;
+  font-size: 1.8rem;
+}
+
+.auth-logo h1 {
+  font-size: 1.5rem;
+  color: #f5f5f5;
+}
+
+.auth-logo h1 span {
+  color: #c9a84c;
+  font-size: 1.5rem;
+}
+
+.auth-card h2 {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+  text-align: center;
+  color: #f5f5f5;
+}
+
+.auth-sub {
+  color: #888;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 0.9rem;
+}
+
+.auth-error {
+  background: rgba(255, 50, 50, 0.1);
+  border: 1px solid rgba(255, 50, 50, 0.3);
+  color: #ff6b6b;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  color: #888;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.form-group input {
+  background: #0a0a0a;
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  border-radius: 4px;
+  padding: 12px 15px;
+  color: #f5f5f5;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.3s ease;
+  width: 100%;
+}
+
+.form-group input:focus {
+  border-color: #c9a84c;
+}
+
+.form-group input::placeholder {
+  color: #444;
+}
+
+.btn-auth {
+  background: #c9a84c;
+  color: #0a0a0a;
+  border: none;
+  padding: 14px;
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+}
+
+.btn-auth:hover {
+  background: #e2c074;
+}
+
+.btn-auth:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-link {
+  text-align: center;
+  margin-top: 25px;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.auth-link a {
+  color: #c9a84c;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-link a:hover {
+  text-decoration: underline;
+}
+
+/* ========================
+   DASHBOARD
+======================== */
+.dashboard {
+  min-height: 100vh;
+  background: #0a0a0a;
+}
+
+.dash-nav {
+  background: #111;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.dash-nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dash-nav-logo span {
+  color: #c9a84c;
+  font-size: 1.5rem;
+}
+
+.dash-nav-logo h1 {
+  font-size: 1.2rem;
+  color: #f5f5f5;
+}
+
+.dash-nav-logo h1 span {
+  color: #c9a84c;
+}
+
+.dash-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.btn-logout {
+  background: transparent;
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  color: #c9a84c;
+  padding: 8px 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+  background: rgba(201, 168, 76, 0.1);
+}
+
+.dash-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+}
+
+.dash-section h2 {
+  font-size: 1.8rem;
+  margin-bottom: 25px;
+  color: #f5f5f5;
+}
+
+.gold {
+  color: #c9a84c;
+}
+
+.dash-empty {
+  background: #111;
+  border: 1px dashed rgba(201, 168, 76, 0.2);
+  border-radius: 8px;
+  padding: 40px;
+  text-align: center;
+  color: #888;
+  line-height: 2;
+}
+
+.reservas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.reserva-card {
+  background: #111;
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.reserva-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.reserva-servicio {
+  font-weight: 600;
+  color: #f5f5f5;
+}
+
+.reserva-estado {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.reserva-estado.pendiente {
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffc107;
+}
+
+.reserva-estado.confirmada {
+  background: rgba(40, 167, 69, 0.15);
+  color: #28a745;
+}
+
+.reserva-estado.cancelada {
+  background: rgba(220, 53, 69, 0.15);
+  color: #dc3545;
+}
+
+.reserva-detalle {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.servicios-grid-dash {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.servicio-dash-card {
+  background: #111;
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  border-radius: 8px;
+  padding: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color 0.3s ease;
+}
+
+.servicio-dash-card:hover {
+  border-color: rgba(201, 168, 76, 0.4);
+}
+
+.servicio-dash-card h3 {
+  color: #f5f5f5;
+  font-size: 1.1rem;
+}
+
+.servicio-dash-card p {
+  color: #888;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.servicio-dash-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.precio-dash {
+  color: #c9a84c;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.duracion-dash {
+  color: #888;
+  font-size: 0.85rem;
+}
+
+.btn-agendar {
+  background: #c9a84c;
+  color: #0a0a0a;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.9rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  margin-top: 5px;
+}
+
+.btn-agendar:hover {
+  background: #e2c074;
+}
+
+
+/* ========================
+   MODAL
+======================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-card {
+  background: #111;
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  border-radius: 8px;
+  padding: 35px;
+  width: 100%;
+  max-width: 420px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-header h3 {
+  font-size: 1.3rem;
+  color: #f5f5f5;
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  color: #888;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.modal-close:hover {
+  color: #f5f5f5;
+}
+
+.modal-precio {
+  display: flex;
+  justify-content: space-between;
+  background: #0a0a0a;
+  padding: 12px 15px;
+  border-radius: 4px;
+  margin-bottom: 25px;
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.modal-precio span:first-child {
+  color: #c9a84c;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.select-hora {
+  background: #0a0a0a;
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  border-radius: 4px;
+  padding: 12px 15px;
+  color: #f5f5f5;
+  font-size: 0.95rem;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.3s ease;
+}
+
+.select-hora:focus {
+  border-color: #c9a84c;
+}
+
+.modal-exito {
+  text-align: center;
+  padding: 20px 0;
+  color: #28a745;
+  font-size: 1rem;
+  line-height: 1.8;
+}
+
+
+.btn-cancelar {
+  margin-top: 15px;
+  background: transparent;
+  border: 1px solid rgba(220, 53, 69, 0.4);
+  color: #dc3545;
+  padding: 8px 15px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.btn-cancelar:hover {
+  background: rgba(220, 53, 69, 0.1);
+  border-color: #dc3545;
+}
